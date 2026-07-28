@@ -1,0 +1,1 @@
+/Users/peterpopescu/.config/tree-sitter-forge/queries/highlights.scm

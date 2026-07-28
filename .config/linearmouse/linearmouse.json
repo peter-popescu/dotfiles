@@ -1,0 +1,100 @@
+{
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.2",
+  "schemes" : [
+    {
+      "buttons" : {
+        "autoScroll" : {
+          "enabled" : false,
+          "mode" : "hold",
+          "preserveNativeMiddleClick" : true,
+          "speed" : 1,
+          "trigger" : {
+            "button" : 0,
+            "command" : true,
+            "control" : true,
+            "option" : true,
+            "shift" : true
+          }
+        }
+      },
+      "if" : {
+        "device" : {
+          "category" : "trackpad",
+          "productID" : "0x342",
+          "productName" : "Apple Internal Keyboard \/ Trackpad",
+          "serialNumber" : "FM721520762PDY8AN+RBZ",
+          "vendorID" : "0x5ac"
+        }
+      },
+      "pointer" : {
+        "acceleration" : "unset",
+        "disableAcceleration" : false,
+        "redirectsToScroll" : false,
+        "speed" : "unset"
+      },
+      "scrolling" : {
+        "acceleration" : {
+          "vertical" : 1
+        },
+        "distance" : {
+          "vertical" : "auto"
+        },
+        "smoothed" : {
+          "vertical" : {
+            "enabled" : false
+          }
+        },
+        "speed" : {
+          "vertical" : 0
+        }
+      }
+    },
+    {
+      "buttons" : {
+        "autoScroll" : {
+          "enabled" : true,
+          "mode" : "toggle",
+          "preserveNativeMiddleClick" : true,
+          "speed" : 1,
+          "trigger" : {
+            "button" : 2
+          }
+        },
+        "universalBackForward" : true
+      },
+      "if" : {
+        "device" : {
+          "category" : "mouse",
+          "productID" : "0xc547",
+          "productName" : "USB Receiver",
+          "vendorID" : "0x46d"
+        }
+      },
+      "pointer" : {
+        "acceleration" : 1,
+        "disableAcceleration" : true,
+        "redirectsToScroll" : false,
+        "speed" : "unset"
+      },
+      "scrolling" : {
+        "acceleration" : {
+          "vertical" : 1
+        },
+        "distance" : {
+          "vertical" : "auto"
+        },
+        "reverse" : {
+          "vertical" : true
+        },
+        "smoothed" : {
+          "vertical" : {
+            "enabled" : false
+          }
+        },
+        "speed" : {
+          "vertical" : 0
+        }
+      }
+    }
+  ]
+}

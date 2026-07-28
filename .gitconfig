@@ -1,0 +1,26 @@
+[user]
+	email = peter_popescu@brown.edu
+	name = peter-popescu
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	editor = vim
+	pager = delta
+	excludesfile = /Users/peterpopescu/.config/git/ignore
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true  # use n and N to move between diff sections
+	dark = true      # or light = true, or omit for auto-detection
+	syntax-theme = Dracula # might not work?
+[merge]
+	conflictStyle = zdiff3
+[init]
+	defaultBranch = main
+[lfs "customtransfer.xet"]
+	path = git-xet
+	args = transfer
+	concurrent = true
