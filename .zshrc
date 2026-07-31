@@ -223,7 +223,7 @@ alias la="$EZA -a"
 
 eval "$(zoxide init --cmd cd zsh)"
 
-# ----- GCloud -----
+# ----- Automatic additions -----
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/peterpopescu/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/peterpopescu/google-cloud-sdk/path.zsh.inc'; fi
@@ -231,7 +231,5 @@ if [ -f '/Users/peterpopescu/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/pe
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/peterpopescu/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/peterpopescu/google-cloud-sdk/completion.zsh.inc'; fi
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/peterpopescu/.lmstudio/bin"
-# End of LM Studio CLI section
-
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.vite-plus/env"
