@@ -2,6 +2,7 @@ return {
   "folke/sidekick.nvim",
   opts = {
     -- add any options here
+    nes = { enabled = false }, -- disable edit suggestions (copilot)
     cli = {
       win = { layout = "left", },
       split = { width = 60 },
@@ -13,17 +14,6 @@ return {
     },
   },
   keys = {
-    {
-      "<tab>",
-      function()
-        -- if there is a next edit, jump to it, otherwise apply it if any
-        if not require("sidekick").nes_jump_or_apply() then
-          return "<Tab>" -- fallback to normal tab
-        end
-      end,
-      expr = true,
-      desc = "Goto/Apply Next Edit Suggestion",
-    },
     {
       "<c-.>",
       function() require("sidekick.cli").focus() end,
@@ -70,11 +60,11 @@ return {
       mode = { "n", "x" },
       desc = "Sidekick Select Prompt",
     },
-    -- Example of a keybinding to open Copilot directly
+    -- Keybinding to open Codex directly
     {
       "<leader>ac",
-      function() require("sidekick.cli").toggle({ name = "copilot", focus = true }) end,
-      desc = "Sidekick Toggle Copilot",
+      function() require("sidekick.cli").toggle({ name = "codex", focus = true }) end,
+      desc = "Sidekick Toggle Codex",
     },
   },
 }
