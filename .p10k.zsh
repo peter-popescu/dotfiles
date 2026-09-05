@@ -35,6 +35,7 @@
     # os_icon               # os identifier
     dir                     # current directory
     vcs                     # git status
+    yadm                    # git status for dotfiles
     # =========================[ Line #2 ]=========================
     newline                 # \n
     prompt_char             # prompt symbol
@@ -1689,6 +1690,36 @@
     p10k segment -f $color -i '' -t "$label"
   }
 
+  function prompt_yadm() {
+    emulate -L zsh
+
+    local repo="$HOME/.local/share/yadm/repo.git"
+    [[ -d "$repo" ]] || return
+    [[ "$PWD" == "$HOME" || "$PWD" == "$HOME"/* ]] || return
+
+    GIT_DIR="$repo" GIT_WORK_TREE="$HOME" \
+      git check-ignore -q -- "$PWD" && return
+
+    local output
+    output=$(GIT_DIR="$repo" GIT_WORK_TREE="$HOME" \
+      git status --porcelain=v1 --branch --untracked-files=normal 2>/dev/null) || return
+
+    local -a lines
+    lines=("${(@f)output}")
+
+    local branch=${lines[1]#'## '}
+    branch=${branch%%\.\.\.*}
+
+    local color=2
+    local dirty=''
+    if (( ${#lines} > 1 )); then
+      color=3
+      dirty=' *'
+    fi
+
+    p10k segment -f $color -t "yadm ${branch}${dirty}"
+  }
+
   # User-defined prompt segments may optionally provide an instant_prompt_* function. Its job
   # is to generate the prompt segment for display in instant prompt. See
   # https://github.com/romkatv/powerlevel10k/blob/master/README.md#instant-prompt.
@@ -1709,6 +1740,10 @@
   }
 
   function instant_prompt_pixi() {
+    :
+  }
+
+  function instant_prompt_yadm() {
     :
   }
 
