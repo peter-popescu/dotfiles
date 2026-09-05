@@ -5,8 +5,10 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-BREW_PREFIX=$(brew --prefix)
-source $BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme
+BREW_PREFIX="${HOMEBREW_PREFIX:-/opt/homebrew}"
+if [[ -r "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  source "$BREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme"
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -20,18 +22,6 @@ setopt hist_expire_dups_first
 setopt hist_ignore_dups
 setopt hist_verify
 setopt extended_history
-setopt inc_append_history
-
-# completion using arrow keys (based on history)
-# bindkey '^[[A' history-search-backward
-# bindkey '^[[B' history-search-forward
-
-# for editing current command (emacs)
-# bindkey -e
-# autoload -U edit-command-line
-# zle -N edit-command-line
-# bindkey '^xe' edit-command-line
-# bindkey '^x^e' edit-command-line
 
 # completions
 typeset -U fpath # make array unique
@@ -48,24 +38,31 @@ ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/compdump"
 [[ -d "${ZSH_COMPDUMP:h}" ]] || mkdir -p "${ZSH_COMPDUMP:h}"
 compinit -u -d "$ZSH_COMPDUMP"
 
+# Google Cloud SDK completion
+if [[ -r "$HOME/google-cloud-sdk/completion.zsh.inc" ]]; then
+  . "$HOME/google-cloud-sdk/completion.zsh.inc"
+fi
+
 # plugins
 # zsh-vi-mode config
 function zvm_config() {
   ZVM_VI_SURROUND_BINDKEY="s-prefix"
   ZVM_SYSTEM_CLIPBOARD_ENABLED=true
-  # ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
 }
 
-source $BREW_PREFIX/share/fzf-tab/fzf-tab.zsh # has to go first
-source $BREW_PREFIX/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+if [[ -r "$BREW_PREFIX/share/fzf-tab/fzf-tab.zsh" ]]; then
+  source "$BREW_PREFIX/share/fzf-tab/fzf-tab.zsh" # has to go first
+fi
+if [[ -r "$BREW_PREFIX/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh" ]]; then
+  source "$BREW_PREFIX/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
+fi
 
-enable-fzf-tab
+(( $+functions[enable-fzf-tab] )) && enable-fzf-tab
 
 # completion config
 # disable sort when completing `git checkout`
 zstyle ':completion:*:git-checkout:*' sort false
 # set descriptions format to enable group support
-# NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
 zstyle ':completion:*:descriptions' format '[%d]'
 # set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
@@ -75,17 +72,19 @@ zstyle ':completion:*' menu no
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 # preview directory's content with eza when completing cd
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-# custom fzf flags
-# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-zstyle ':fzf-tab:*' fzf-flags --ansi --bind=tab:accept
-# To make fzf-tab follow FZF_DEFAULT_OPTS.
-# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+# To make fzf-tab follow FZF_DEFAULT_OPTS (so keep them simple below)
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
+# custom fzf flags
+zstyle ':fzf-tab:*' fzf-flags --ansi --bind=tab:accept
 # switch group using `<` and `>`
 zstyle ':fzf-tab:*' switch-group '<' '>'
 
-source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -r "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
+if [[ -r "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
 
 # aliases
 alias reload-zsh="source ~/.zshrc"
@@ -96,7 +95,14 @@ alias edit-tmux="nvim ~/.tmux.conf"
 
 alias excl-pixi="~/.local/bin/exclude-pixi.sh"
 alias pa='eval "$(pixi shell-hook)"'
+
 alias moshcs="mosh --experimental-remote-ip=remote username@ssh.cs.brown.edu"
+
+alias path='echo $PATH | tr ":" "\n"'
+
+alias vim=nvim
+
+alias 'gc'='git clone "$(pbpaste)"'
 
 function nvim() {
   if [[ -f "pixi.toml" ]]; then
@@ -130,12 +136,6 @@ function extract() {
   fi
 }
 
-alias path='echo $PATH | tr ":" "\n"'
-
-alias vim=nvim
-
-alias 'gc'='git clone "$(pbpaste)"'
-
 ggl () {
   f='%C(yellow)%h\t[%ad]%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(blue)%an%C(reset)'
   size='20'
@@ -148,24 +148,17 @@ ggl () {
     nl -w 2
 }
 
-export EDITOR=nvim
-
-export JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.9/libexec/openjdk.jdk/Contents/Home
-
-export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
-
-export PATH="/Applications/Racket/bin/racket:$PATH"
-
 # ---- FZF -----
 
 # Set up fzf key bindings and fuzzy completion
-eval "$(fzf --zsh)"
+if (( $+commands[fzf] )); then
+  eval "$(fzf --zsh)"
+fi
 
 # Set up fzf theme (Dracula)
 export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4'
 
 # -- Use fd instead of fzf --
-
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
@@ -205,8 +198,10 @@ _fzf_comprun() {
   esac
 }
 
-bindkey -r '^[c'
-bindkey '^O' fzf-cd-widget
+if (( $+functions[fzf-cd-widget] )); then
+  bindkey -r '^[c'
+  bindkey '^O' fzf-cd-widget
+fi
 
 # ----- Bat (better cat) -----
 
@@ -221,15 +216,9 @@ alias la="$EZA -a"
 
 # ----- Zoxide (better cd) -----
 
-eval "$(zoxide init --cmd cd zsh)"
-
-# ----- Automatic additions -----
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/peterpopescu/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/peterpopescu/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/peterpopescu/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/peterpopescu/google-cloud-sdk/completion.zsh.inc'; fi
+if (( $+commands[zoxide] )); then
+  eval "$(zoxide init --cmd cd zsh)"
+fi
 
 # Vite+ bin (https://viteplus.dev)
 . "$HOME/.vite-plus/env"
