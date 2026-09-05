@@ -1,4 +1,7 @@
 local function split_str(inputstr, sep)
+	if inputstr == nil then
+		return {}
+	end
 	if sep == nil then
 		sep = "%s"
 	end
@@ -58,7 +61,6 @@ local oil_ui = {}
 oil_ui.is_image = function(filepath)
 	local extension = filepath:match("^.+(%..+)$")
 	if not extension then return false end
-	
 	extension = extension:lower()
 	return extension == '.bmp' or extension == '.jpg' or extension == '.jpeg' 
 		or extension == '.png' or extension == '.gif' or extension == '.webp'
@@ -436,6 +438,11 @@ oil_ui.cursor_file_preview = function()
 	local current_dir = oil.get_current_dir()
 	local selected_file = oil.get_cursor_entry()
 
+	--skip preview for ssh/remote listings or when the cursor entry is missing
+	if current_dir == nil or current_dir:match("://") ~= nil or selected_file == nil or selected_file.name == nil then
+		return
+	end
+
 	--preview update for entry on cursor. As seen before, most of the window information will not change, and processes envolving such windows will not occur. Only the preview window will have its information updated and window content changed accordingly.
 	if selected_file ~= nil and selected_file.name ~= ".." then
 		current_dir = split_str(current_dir, "/")
@@ -489,6 +496,17 @@ oil_ui.select_oil_entry_with_parent_and_preview = function()
 	local current_dir = oil.get_current_dir()
 	local selected_file = oil.get_cursor_entry()
 
+	--for ssh/remote listings (and other cases where the current dir is not a
+	--local path) get_current_dir() can be nil or a remote url. Fall back to
+	--oil's default select handling instead of trying to parse the path.
+	if current_dir == nil or current_dir:match("://") ~= nil or selected_file == nil or selected_file.name == nil then
+		local action = require("oil.actions").select
+		if type(action) == "table" and type(action.callback) == "function" then
+			pcall(action.callback, {})
+		end
+		return
+	end
+
 	--select entry on cursor action override, implementing navigation on an absolute basis (e.g: if you select a dir on the parent directory, that entry becomes the new current directory, enabling even more cross directory navigation and operations).
 	if selected_file.name == ".." then
 		current_dir = split_str(current_dir, "/")
@@ -538,6 +556,7 @@ return {
 		vim.g.is_oil_loaded = true
 		vim.g.is_oil_active = false
 		vim.g.oil_preview_active = true
+		vim.g.oil_opening = false
 		vim.g.oil_state = {
 			original_file = { path = nil, buffer_number = nil },
 			current = {
@@ -683,7 +702,7 @@ return {
 				-- ["<C-l>"] = "actions.refresh",
 				["<C-l>"] = false,
 				["<C-r>"] = "actions.refresh",
-				["q"] = { "actions.close", mode = "n" },
+				["q"] = { oil_ui.close_oil_windows, mode = "n" },
 				["-"] = {
 					function()
 						local new_current = vim.g.oil_state.current
@@ -865,6 +884,43 @@ return {
 			keymaps_help = {
 				border = "rounded",
 			},
+		})
+
+		--when a directory is opened via default_file_explorer (e.g. `nvim .` or
+		--`:e dir`) oil opens a plain one-pane view. Detect that and turn it into
+		--the 3-pane (current / parent / preview) layout.
+		vim.api.nvim_create_augroup("OilThreePane", { clear = true })
+		vim.api.nvim_create_autocmd("FileType", {
+			group = "OilThreePane",
+			pattern = "oil",
+			callback = function()
+				if vim.g.is_oil_active or vim.g.oil_opening then
+					return
+				end
+				vim.schedule(function()
+					if vim.g.is_oil_active or vim.g.oil_opening then
+						return
+					end
+					if vim.bo.filetype ~= "oil" then
+						return
+					end
+					local dir = require("oil").get_current_dir()
+					if dir == nil then
+						dir = vim.api.nvim_buf_get_name(0):match("^oil://(.*)$")
+					end
+					if dir == nil or dir == "" or dir:match("://") ~= nil then
+						return
+					end
+					vim.g.oil_opening = true
+					local ok, err = pcall(oil_ui.open_oil_with_parent_and_preview,
+						{ window_number = nil, window_path = split_str(dir, "/"), buffer_number = nil },
+						vim.g.oil_state.parent, vim.g.oil_state.preview)
+					vim.g.oil_opening = false
+					if not ok then
+						vim.notify("Oil 3-pane open failed: " .. tostring(err), vim.log.levels.ERROR)
+					end
+				end)
+			end,
 		})
 	end,
 	keys = {
