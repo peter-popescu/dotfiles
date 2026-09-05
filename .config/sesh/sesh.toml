@@ -1,0 +1,12 @@
+[default_session]
+preview_command = "eza --all --git --icons --color=always {}"
+
+[[session]]
+name = "nas"
+path = "~"
+startup_command = "tmux rename-window 'mosh' && mosh peter@nas-ty"
+windows = [ "oil-ssh" ]
+
+[[window]]
+name = "oil-ssh"
+startup_script = "nvim oil-ssh://peter@nas-ty//home/peter"

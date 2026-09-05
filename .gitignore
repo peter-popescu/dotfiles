@@ -27,6 +27,8 @@
 !/.config/neofetch/**
 !/.config/nvim/
 !/.config/nvim/**
+!/.config/sesh/
+!/.config/sesh/**
 !/.config/yadm/
 !/.config/yadm/**
 
