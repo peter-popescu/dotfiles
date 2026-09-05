@@ -96,7 +96,7 @@ alias edit-tmux="nvim ~/.tmux.conf"
 
 alias excl-pixi="~/.local/bin/exclude-pixi.sh"
 alias pa='eval "$(pixi shell-hook)"'
-alias opencode-fusion='~/code/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode'
+alias moshcs="mosh --experimental-remote-ip=remote username@ssh.cs.brown.edu"
 
 function nvim() {
   if [[ -f "pixi.toml" ]]; then
