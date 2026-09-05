@@ -120,4 +120,5 @@ return {
     ft = { "markdown" },
   },
   { "pteroctopus/faster.nvim" },
+  { "luizribeiro/vim-cooklang" },
 }

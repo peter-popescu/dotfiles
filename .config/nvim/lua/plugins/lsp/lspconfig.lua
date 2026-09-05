@@ -105,6 +105,15 @@ return {
       },
     })
 
+    vim.lsp.config("cooklang", {
+      settings = {
+        cmd = { 'cook', 'lsp' },
+        filetypes = { 'cooklang' },
+        root_dir = lspconfig.util.root_pattern('.git', 'config'),
+        settings = {},
+      },
+    })
+
     -- Dynamically find the path for the current python interpreter
     local python_path = vim.fn.trim(vim.fn.system("which python"))
 
