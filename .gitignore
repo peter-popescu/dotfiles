@@ -17,8 +17,6 @@
 
 !/.config/aerospace/
 !/.config/aerospace/**
-!/.config/btop/
-!/.config/btop/**
 !/.config/git/
 !/.config/git/**
 !/.config/karabiner/
@@ -41,3 +39,5 @@
 # Ignore generated files
 .DS_Store
 /.config/karabiner/automatic_backups/
+/.config/nvim/lazy-lock.json
+/.config/nvim/nvim.log
