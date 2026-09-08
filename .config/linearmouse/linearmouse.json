@@ -1,12 +1,11 @@
 {
-  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.2",
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.4",
   "schemes" : [
     {
       "buttons" : {
         "autoScroll" : {
           "enabled" : false,
           "mode" : "hold",
-          "preserveNativeMiddleClick" : true,
           "speed" : 1,
           "trigger" : {
             "button" : 0,
@@ -54,7 +53,6 @@
         "autoScroll" : {
           "enabled" : true,
           "mode" : "toggle",
-          "preserveNativeMiddleClick" : true,
           "speed" : 1,
           "trigger" : {
             "button" : 2
@@ -71,7 +69,7 @@
         }
       },
       "pointer" : {
-        "acceleration" : 1,
+        "acceleration" : 1.5,
         "disableAcceleration" : true,
         "redirectsToScroll" : false,
         "speed" : "unset"
