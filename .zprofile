@@ -14,6 +14,7 @@ if [[ -x "$BREW_PREFIX/bin/brew" ]]; then
   unset _java_prefix
 fi
 
+export PATH="$HOME/.local/bin:$PATH"
 [[ -d "$HOME/.local/share/nvim/mason/bin" ]] && \
   export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 [[ -d "/Applications/Racket/bin" ]] && \
