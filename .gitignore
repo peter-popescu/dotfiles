@@ -23,8 +23,6 @@
 !/.config/karabiner/**
 !/.config/linearmouse/
 !/.config/linearmouse/**
-!/.config/neofetch/
-!/.config/neofetch/**
 !/.config/nvim/
 !/.config/nvim/**
 !/.config/sesh/
