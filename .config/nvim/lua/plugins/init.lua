@@ -1,7 +1,6 @@
 return {
   "nvim-lua/plenary.nvim", -- lua functions that many plugins use
-  { "tpope/vim-repeat" },
-  { "monaqa/dial.nvim" },
+  "tpope/vim-repeat", -- repeat compound actions
   "christoomey/vim-tmux-navigator", -- tmux & split window navigation
   "tpope/vim-sleuth", -- set buffer options
   "pteroctopus/faster.nvim", -- speed up large files
@@ -48,6 +47,10 @@ return {
         ["tinymist"] = "tinymist",
       },
     },
+    config = function()
+      local opts = { silent = true, desc = "Open Typst preview" }
+      vim.keymap.set("n", "<leader>pt", "<cmd>TypstPreview<cr>", opts)
+    end,
   },
   {
     "mbbill/undotree",
@@ -110,6 +113,9 @@ return {
     build = "cd app && npm install",
     init = function()
       vim.g.mkdp_filetypes = { "markdown" }
+      vim.g.mkdp_auto_close = 0
+      local opts = { silent = true, desc = "Open Markdown preview" }
+      vim.keymap.set("n", "<leader>pm", "<cmd>MarkdownPreviewToggle<cr>", opts)
     end,
     ft = { "markdown" },
   },
