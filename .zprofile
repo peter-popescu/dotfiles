@@ -1,6 +1,5 @@
-if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
+[[ -d "$HOME/.local/bin" ]] &&
+  export PATH="$HOME/.local/bin:$PATH"
 
 [[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
@@ -14,11 +13,14 @@ if [[ -x "$BREW_PREFIX/bin/brew" ]]; then
   unset _java_prefix
 fi
 
-export PATH="$HOME/.local/bin:$PATH"
-[[ -d "$HOME/.local/share/nvim/mason/bin" ]] && \
+[[ -d "$HOME/.local/bin" ]] &&
+  export PATH="$HOME/.local/bin:$PATH"
+[[ -d "$HOME/.pixi/bin" ]] &&
+  export PATH="$HOME/.pixi/bin:$PATH"
+[[ -d "$HOME/.local/share/nvim/mason/bin" ]] &&
   export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
-[[ -d "/Applications/Racket/bin" ]] && \
+[[ -d "/Applications/Racket/bin" ]] &&
   export PATH="/Applications/Racket/bin:$PATH"
 
-[[ -r "$HOME/google-cloud-sdk/path.zsh.inc" ]] && \
+[[ -r "$HOME/google-cloud-sdk/path.zsh.inc" ]] &&
   . "$HOME/google-cloud-sdk/path.zsh.inc"
