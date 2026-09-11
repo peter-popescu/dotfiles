@@ -90,7 +90,6 @@ fi
 alias reload-zsh="source ~/.zshrc"
 alias edit-zsh="nvim ~/.zshrc"
 alias edit-wezterm="nvim ~/.wezterm.lua"
-alias edit-nvim="cd nvim && nvim ~/.config/nvim"
 alias edit-tmux="nvim ~/.tmux.conf"
 
 alias excl-pixi="~/.local/bin/exclude-pixi.sh"
