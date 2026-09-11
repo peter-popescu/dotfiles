@@ -1,5 +1,7 @@
 return {
   "nvim-lua/plenary.nvim", -- lua functions that many plugins use
+  { "tpope/vim-repeat" },
+  { "monaqa/dial.nvim" },
   "christoomey/vim-tmux-navigator", -- tmux & split window navigation
   "tpope/vim-sleuth", -- set buffer options
   "pteroctopus/faster.nvim", -- speed up large files
@@ -110,5 +112,12 @@ return {
       vim.g.mkdp_filetypes = { "markdown" }
     end,
     ft = { "markdown" },
+  },
+  {
+    "Kohei-Wada/yadm-git.nvim",
+    lazy = false,
+    config = function()
+      require("yadm-git").setup()
+    end,
   },
 }

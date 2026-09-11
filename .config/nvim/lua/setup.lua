@@ -12,31 +12,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-  { import = "common_plugins" },
-  {
-    import = "plugins",
-    cond = function()
-      return not vim.g.vscode
-    end,
-  },
-  {
-    import = "vscode_plugins",
-    cond = function()
-      return vim.g.vscode
-    end,
-  },
-  {
-    import = "plugins.lsp",
-    cond = function()
-      return not vim.g.vscode
-    end,
-  },
-  {
-    import = "plugins.themes.dracula",
-    cond = function()
-      return not vim.g.vscode
-    end,
-  },
+  { import = "plugins" },
+  { import = "plugins.lsp" },
+  { import = "plugins.themes.dracula" },
 }, {
   checker = {
     enabled = true,

@@ -39,10 +39,7 @@ return {
           ["nvim-treesitter"] = true,
           ["nvim-lspconfig"] = true,
           ["nvim-cmp"] = true,
-          ["nvim-tree.lua"] = true,
-          ["indent-blankline.nvim"] = true,
           ["which-key.nvim"] = true,
-          ["dashboard-nvim"] = true,
           ["gitsigns.nvim"] = true,
           ["todo-comments.nvim"] = true,
           ["lazy.nvim"] = true,
@@ -51,11 +48,6 @@ return {
           ["mini.statusline"] = true,
           ["mini.starter"] = true,
           ["mini.cursorword"] = true,
-          ["mini.indentscope"] = true,
-          ["mini.trailspace"] = true,
-          ["mini.jump"] = true,
-          ["mini.jump2d"] = true,
-          ["mini.files"] = true,
         },
       })
       -- vim.cmd.colorscheme("dracula")
