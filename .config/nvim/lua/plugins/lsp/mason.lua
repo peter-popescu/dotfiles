@@ -25,34 +25,35 @@ return {
     })
 
     mason_lspconfig.setup({
-      -- list of servers for mason to install
-      automatic_installation = true,
+      -- Installation and activation are deliberately separate. See lspconfig.lua.
+      automatic_enable = false,
       ensure_installed = {
-        "vtsls", -- typescript/javascript LSP (replaces tsserver)
+        "asm_lsp",
+        "clangd",
+        "eslint",
+        "golangci_lint_ls",
+        "gopls",
+        "jsonls",
         "lua_ls",
+        "markdown_oxide",
         "pyright",
         "rust_analyzer",
-        "clangd",
-        "asm_lsp",
-        -- "ltex",
-        "markdown_oxide",
-        "gopls",
         "tinymist",
+        "tombi",
+        "vtsls",
       },
     })
 
     mason_tool_installer.setup({
       ensure_installed = {
-        -- "vtsls", -- typescript/javascript LSP
-        "eslint_d", -- javascript/typescript linter & formatter
-        "prettierd", -- prettier formatter
-        "stylua", -- lua formatter
-        "isort", -- python formatter
-        "black", -- python formatter
-        -- "clang-format", -- c/c++ formatter
-        "pylint", -- python linter
-        "cpplint", -- c/c++ linter
-        "golangci_lint_ls", -- go linter
+        "clang-format",
+        "cpplint",
+        "golangci-lint",
+        "prettierd",
+        "prettypst",
+        "ruff",
+        "shfmt",
+        "stylua",
       },
     })
   end,

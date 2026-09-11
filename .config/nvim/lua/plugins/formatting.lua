@@ -6,28 +6,31 @@ return {
 
     conform.setup({
       formatters_by_ft = {
-        javascript = { "eslint_d" },
-        javascriptreact = { "eslint_d" },
-        typescript = { "eslint_d" },
-        typescriptreact = { "eslint_d" },
+        javascript = { "prettierd" },
+        javascriptreact = { "prettierd" },
+        typescript = { "prettierd" },
+        typescriptreact = { "prettierd" },
         c = { "clang-format" },
         cpp = { "clang-format" },
+        css = { "prettierd" },
+        graphql = { "prettierd" },
+        html = { "prettierd" },
         json = { "prettierd" },
+        jsonc = { "prettierd" },
         yaml = { "prettierd" },
         markdown = { "prettierd" },
         lua = { "stylua" },
-        python = { "isort", "black" },
+        python = { "ruff_organize_imports", "ruff_format" },
+        sh = { "shfmt" },
+        bash = { "shfmt" },
+        zsh = { "shfmt" },
+        typst = { "prettypst" },
       },
-      -- format_on_save = {
-      --   lsp_fallback = true,
-      --   async = false,
-      --   timeout_ms = 1000,
-      -- },
     })
 
     vim.keymap.set({ "n", "v" }, "<leader>mp", function()
       conform.format({
-        lsp_fallback = true,
+        lsp_format = "fallback",
         async = false,
         timeout_ms = 1000,
       })

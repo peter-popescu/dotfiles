@@ -2,6 +2,8 @@ return {
   "nvim-lua/plenary.nvim", -- lua functions that many plugins use
   "christoomey/vim-tmux-navigator", -- tmux & split window navigation
   "tpope/vim-sleuth", -- set buffer options
+  "pteroctopus/faster.nvim", -- speed up large files
+  "luizribeiro/vim-cooklang", -- cooklang syntax highlighting
   {
     "rcarriga/nvim-notify",
     event = "VeryLazy",
@@ -23,7 +25,7 @@ return {
       -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
       "MunifTanjim/nui.nvim",
       -- OPTIONAL:
-      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   `nvim-notify` is only needed if you want to use the notification view.
       --   If not available, we use `mini` as the fallback
       "rcarriga/nvim-notify",
     },
@@ -40,11 +42,10 @@ return {
     lazy = false, -- or ft = 'typst'
     version = "1.*",
     opts = {
-      -- open_cmd = "qutebrowser %s",
       dependencies_bin = {
         ["tinymist"] = "tinymist",
       },
-    }, -- lazy.nvim will implicitly calls `setup {}`
+    },
   },
   {
     "mbbill/undotree",
@@ -52,15 +53,6 @@ return {
       vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Toggle undotree" })
     end,
   },
-  -- {
-  --   {
-  --     "quarto-dev/quarto-nvim",
-  --     dependencies = {
-  --       "jmbuhr/otter.nvim",
-  --       "nvim-treesitter/nvim-treesitter",
-  --     },
-  --   },
-  -- },
   {
     "3rd/image.nvim",
     event = "VeryLazy",
@@ -119,6 +111,4 @@ return {
     end,
     ft = { "markdown" },
   },
-  { "pteroctopus/faster.nvim" },
-  { "luizribeiro/vim-cooklang" },
 }

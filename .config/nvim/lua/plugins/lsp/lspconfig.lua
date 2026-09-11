@@ -7,19 +7,14 @@ return {
     { "folke/neodev.nvim", opts = {} },
   },
   config = function()
-    -- import lspconfig plugin
-    local lspconfig = require("lspconfig")
-
-    -- import mason_lspconfig plugin
-    local mason_lspconfig = require("mason-lspconfig")
-
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
+    local python_env = require("core.python_env")
 
     local keymap = vim.keymap -- for conciseness
 
     vim.api.nvim_create_autocmd("LspAttach", {
-      group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+      group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
       callback = function(ev)
         -- Buffer local mappings.
         -- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -88,42 +83,51 @@ return {
       update_in_insert = false,
     })
 
-    -- Racket LSP (installed via raco, not mason)
+    local function root_with_fallback(markers)
+      return function(bufnr, on_dir)
+        local name = vim.api.nvim_buf_get_name(bufnr)
+        local directory = vim.fs.dirname(name) or vim.uv.cwd()
+        on_dir(vim.fs.root(bufnr, markers) or directory)
+      end
+    end
+
+    -- Racket LSP (installed via raco, not Mason)
     vim.lsp.config("racket_langserver", {
       cmd = { "racket", "--lib", "racket-langserver" },
       filetypes = { "racket", "scheme" },
-      root_markers = { ".rkt", ".git" },
+      root_dir = root_with_fallback({ ".git" }),
     })
-    vim.lsp.enable("racket_langserver")
 
-    -- Configure a server via `vim.lsp.config()` or `{after/}lsp/lua_ls.lua`
     vim.lsp.config("tinymist", {
       settings = {
-        formatterMode = "typstyle",
         exportPdf = "onType",
         semanticTokens = "disable",
       },
     })
 
     vim.lsp.config("cooklang", {
-      settings = {
-        cmd = { 'cook', 'lsp' },
-        filetypes = { 'cooklang' },
-        root_dir = lspconfig.util.root_pattern('.git', 'config'),
-        settings = {},
-      },
+      cmd = { "cook", "lsp" },
+      filetypes = { "cook" },
+      root_dir = root_with_fallback({ "config", ".git" }),
+      settings = {},
     })
 
-    -- Dynamically find the path for the current python interpreter
-    local python_path = vim.fn.trim(vim.fn.system("which python"))
-
-    -- A quick way to check which path is being used
-    -- vim.notify("Pyright is using Python at: " .. python_path)
-
     vim.lsp.config("pyright", {
+      root_markers = {
+        "pyrightconfig.json",
+        "pyproject.toml",
+        "pixi.toml",
+        "setup.py",
+        "setup.cfg",
+        "requirements.txt",
+        "Pipfile",
+        ".git",
+      },
+      before_init = function(_, config)
+        python_env.apply_to_pyright_config(config)
+      end,
       settings = {
         python = {
-          pythonPath = python_path,
           analysis = {
             autoSearchPaths = true,
             diagnosticMode = "openFilesOnly",
@@ -133,13 +137,7 @@ return {
       },
     })
 
-    -- TODO: this is prolly dumb idk
-    -- Configure vtsls: disable diagnostics (eslint_d handles those)
-    -- but keep language features (hover, go-to-definition, etc.)
     vim.lsp.config("vtsls", {
-      handlers = {
-        ["textDocument/publishDiagnostics"] = function() end, -- disable diagnostics
-      },
       settings = {
         typescript = {
           inlayHints = {
@@ -167,5 +165,33 @@ return {
     vim.lsp.config("*", {
       capabilities = capabilities,
     })
+
+    vim.api.nvim_create_user_command("PyrightPickEnv", function()
+      python_env.pick(vim.api.nvim_get_current_buf())
+    end, { desc = "Choose the Pyright interpreter for this workspace", force = true })
+
+    vim.api.nvim_create_user_command("PyrightClearEnv", function()
+      python_env.clear(vim.api.nvim_get_current_buf())
+    end, { desc = "Clear the saved Pyright interpreter for this workspace", force = true })
+
+    for _, server in ipairs({
+      "asm_lsp",
+      "clangd",
+      "eslint",
+      "golangci_lint_ls",
+      "gopls",
+      "jsonls",
+      "lua_ls",
+      "markdown_oxide",
+      "pyright",
+      "racket_langserver",
+      "rust_analyzer",
+      "tinymist",
+      "tombi",
+      "vtsls",
+      "cooklang",
+    }) do
+      vim.lsp.enable(server)
+    end
   end,
 }
