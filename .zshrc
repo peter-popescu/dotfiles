@@ -103,17 +103,6 @@ alias vim=nvim
 
 alias 'gc'='git clone "$(pbpaste)"'
 
-function nvim() {
-  if [[ -f "pixi.toml" ]]; then
-    # Run in a subshell `(...)` so the environment variables
-    # disappear the moment you close Neovim.
-    (eval "$(pixi shell-hook)" && command nvim "$@")
-  else
-    # Just run normally
-    command nvim "$@"
-  fi
-}
-
 function mkcd() { mkdir -p "$1" && cd "$1" }
 
 function extract() {

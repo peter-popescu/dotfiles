@@ -4,6 +4,7 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+    "nvim-telescope/telescope-ui-select.nvim",
     "nvim-tree/nvim-web-devicons",
     "folke/todo-comments.nvim",
   },
@@ -22,9 +23,17 @@ return {
           },
         },
       },
+      extensions = {
+        ["ui-select"] = {
+          require("telescope.themes").get_dropdown({
+            previewer = false,
+          }),
+        },
+      },
     })
 
     telescope.load_extension("fzf")
+    telescope.load_extension("ui-select")
     telescope.load_extension("yank_history")
 
     -- set keymaps

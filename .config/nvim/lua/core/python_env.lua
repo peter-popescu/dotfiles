@@ -13,6 +13,7 @@ local root_markers = {
 }
 
 local selections
+local notified_roots = {}
 
 local function canonical(path)
   if not path or path == "" then
@@ -75,6 +76,20 @@ local function pixi_environments(root)
   return environments
 end
 
+local function default_pixi_environment(root)
+  return environment_python(vim.fs.joinpath(root, ".pixi", "envs", "default"))
+end
+
+local function pixi_shell_environment(root)
+  if vim.env.PIXI_IN_SHELL ~= "1" or canonical(vim.env.PIXI_PROJECT_ROOT) ~= root then
+    return nil
+  end
+
+  return environment_python(
+    vim.fs.joinpath(root, ".pixi", "envs", vim.env.PIXI_ENVIRONMENT_NAME or "default")
+  )
+end
+
 function M.root_for_buffer(bufnr)
   local name = vim.api.nvim_buf_get_name(bufnr)
   local start = name ~= "" and name or vim.uv.cwd()
@@ -87,11 +102,9 @@ function M.resolve(root)
     return nil
   end
 
-  for _, prefix in ipairs({ vim.env.VIRTUAL_ENV, vim.env.CONDA_PREFIX }) do
-    local python = environment_python(prefix)
-    if python then
-      return python
-    end
+  local virtualenv_python = environment_python(vim.env.VIRTUAL_ENV)
+  if virtualenv_python then
+    return virtualenv_python
   end
 
   local saved = load_selections()[root]
@@ -99,36 +112,76 @@ function M.resolve(root)
     return canonical(saved)
   end
 
+  local in_matching_pixi_shell =
+    vim.env.PIXI_IN_SHELL == "1" and canonical(vim.env.PIXI_PROJECT_ROOT) == root
+  local pixi_python = pixi_shell_environment(root)
+  if pixi_python then
+    return pixi_python
+  end
+
+  -- Pixi exposes its active prefix through CONDA_PREFIX. Do not use that
+  -- value again here: pixi_shell_environment() handled the matching project,
+  -- and a saved picker choice should win over Pixi's default environment.
+  if not in_matching_pixi_shell then
+    local conda_python = environment_python(vim.env.CONDA_PREFIX)
+    if conda_python then
+      return conda_python
+    end
+  end
+
   local environments = pixi_environments(root)
   if #environments == 1 then
     return environments[1]
   end
+
+  -- Pixi uses the `default` environment when no `-e/--environment` is
+  -- specified. Prefer it when a project has multiple environments so a
+  -- pyproject.toml workspace still gets an interpreter automatically.
+  return default_pixi_environment(root)
 end
 
-function M.apply_to_pyright_config(config)
-  local python = M.resolve(config.root_dir)
-  if not python then
+local function notify_environment(root, python)
+  if notified_roots[root] then
     return
   end
 
-  config.settings = vim.tbl_deep_extend("force", config.settings or {}, {
-    python = { pythonPath = python },
-  })
+  notified_roots[root] = true
+  vim.schedule(function()
+    if python then
+      vim.notify("Pyright environment: " .. (vim.fs.relpath(root, python) or python))
+    else
+      vim.notify(
+        "Pyright could not find a Python environment for "
+          .. root
+          .. "\nUse <leader>pe or :PyrightPickEnv to choose one.",
+        vim.log.levels.WARN
+      )
+    end
+  end)
 end
 
-local function update_clients(root, python)
-  root = canonical(root)
-  for _, client in ipairs(vim.lsp.get_clients({ name = "pyright" })) do
-    if canonical(client.config.root_dir) == root then
-      client.settings = vim.tbl_deep_extend("force", client.settings or {}, {
-        python = { pythonPath = python },
-      })
-      client.config.settings = vim.tbl_deep_extend("force", client.config.settings or {}, {
-        python = { pythonPath = python },
-      })
-      client:notify("workspace/didChangeConfiguration", { settings = nil })
+local function set_client_python(client, python)
+  client.settings = vim.tbl_deep_extend("force", client.settings or {}, {
+    python = { pythonPath = python },
+  })
+  client.config.settings = vim.tbl_deep_extend("force", client.config.settings or {}, {
+    python = { pythonPath = python },
+  })
+  client:notify("workspace/didChangeConfiguration", { settings = nil })
+end
+
+function M.apply_to_pyright_client(client)
+  local root = canonical(client.config.root_dir)
+  local python = M.resolve(root)
+  if not python then
+    if root then
+      notify_environment(root)
     end
+    return
   end
+
+  notify_environment(root, python)
+  set_client_python(client, python)
 end
 
 function M.pick(bufnr)
@@ -151,7 +204,14 @@ function M.pick(bufnr)
 
     load_selections()[root] = python
     save_selections()
-    update_clients(root, python)
+    notified_roots[root] = true
+    vim.notify("Pyright environment: " .. (vim.fs.relpath(root, python) or python))
+
+    for _, client in ipairs(vim.lsp.get_clients({ name = "pyright", bufnr = bufnr })) do
+      if canonical(client.config.root_dir) == root then
+        set_client_python(client, python)
+      end
+    end
   end)
 end
 
@@ -159,7 +219,13 @@ function M.clear(bufnr)
   local root = canonical(M.root_for_buffer(bufnr))
   load_selections()[root] = nil
   save_selections()
-  vim.cmd("LspRestart pyright")
+  notified_roots[root] = nil
+
+  for _, client in ipairs(vim.lsp.get_clients({ name = "pyright", bufnr = bufnr })) do
+    if canonical(client.config.root_dir) == root then
+      M.apply_to_pyright_client(client)
+    end
+  end
 end
 
 return M

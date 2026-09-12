@@ -59,6 +59,14 @@ return {
 
         opts.desc = "Restart LSP"
         keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
+
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if client and client.name == "pyright" then
+          opts.desc = "Choose the Pyright environment"
+          keymap.set("n", "<leader>pe", function()
+            python_env.pick(ev.buf)
+          end, opts)
+        end
       end,
     })
 
@@ -123,8 +131,8 @@ return {
         "Pipfile",
         ".git",
       },
-      before_init = function(_, config)
-        python_env.apply_to_pyright_config(config)
+      on_init = function(client)
+        python_env.apply_to_pyright_client(client)
       end,
       settings = {
         python = {

@@ -5,5 +5,4 @@ return {
   "tpope/vim-sleuth", -- set buffer options
   "pteroctopus/faster.nvim", -- speed up large files
   "luizribeiro/vim-cooklang", -- cooklang syntax highlighting
-  'stevearc/dressing.nvim', -- better pickers
 }
