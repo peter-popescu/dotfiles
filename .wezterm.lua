@@ -15,4 +15,16 @@ config.enable_tab_bar = false
 -- Bindings
 config.disable_default_key_bindings = true
 
+function SendHex(hex)
+	return wezterm.action.SendString(utf8.char(hex))
+end
+
+config.keys = {
+	-- Map Cmd + h/j/k/l to output obscure raw hex strings
+	{ key = "h", mods = "CMD", action = SendHex(0xAA) },
+	{ key = "j", mods = "CMD", action = SendHex(0xAB) },
+	{ key = "k", mods = "CMD", action = SendHex(0xAC) },
+	{ key = "l", mods = "CMD", action = SendHex(0xAD) },
+}
+
 return config

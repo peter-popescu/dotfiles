@@ -24,11 +24,22 @@ return {
 
     -- Keymaps for yanky
     local keymap = vim.keymap
-    keymap.set("n", "p", "<plug>(YankyPutAfter)", { noremap = true })
-    keymap.set("n", "P", "<plug>(YankyPutBefore)", { noremap = true })
-    keymap.set("x", "p", "<plug>(YankyPutAfter)", { noremap = true })
-    keymap.set("x", "P", "<plug>(YankyPutBefore)", { noremap = true })
-    keymap.set("n", "[y", "<plug>(YankyCycleForward)", { noremap = true })
-    keymap.set("n", "]y", "<plug>(YankyCycleBackward)", { noremap = true })
+    local opts = { noremap = true, silent = true }
+    opts.desc = "Put after"
+    keymap.set({"n", "x"}, "p", "<plug>(YankyPutAfter)", opts)
+    opts.desc = "Put before"
+    keymap.set({"n", "x"}, "P", "<plug>(YankyPutBefore)", opts)
+    opts.desc = "Cycle yank forward"
+    keymap.set("n", "[y", "<plug>(YankyCycleForward)", opts)
+    opts.desc = "Cycle yank backward"
+    keymap.set("n", "]y", "<plug>(YankyCycleBackward)", opts)
+
+    opts = { silent = true }
+    opts.desc = "Copy to system clipboard"
+    keymap.set({ "n", "x" }, "gy", '"+y', opts)
+    opts.desc = "Paste from system clipboard"
+    keymap.set({ "n", "x" }, "gp", '"+p', opts)
+    opts.desc = "Paste before from system clipboard"
+    keymap.set({ "n", "x" }, "gP", '"+P', opts)
   end,
 }

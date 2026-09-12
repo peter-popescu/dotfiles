@@ -6,19 +6,22 @@ return {
       local keymap = vim.keymap -- for conciseness
       local opts = { silent = true }
 
-      -- mini.statusline
+      -- status bar
       require("mini.statusline").setup()
 
-      -- mini.cursorword
+      -- info on left column
+      require("mini.statuscolumn").setup()
+
+      -- highlight word under cursor
       require("mini.cursorword").setup()
 
-      -- mini.surround - surround actions
+      -- surround actions
       require("mini.surround").setup()
 
-      -- mini.ai - extend a/i text objects
+      -- extend a/i text objects
       require("mini.ai").setup()
 
-      -- mini.starter - start screen
+      -- start screen
       local starter = require("mini.starter")
       starter.setup({
         evaluate_single = true,
@@ -31,7 +34,7 @@ return {
         },
         content_hooks = {
           starter.gen_hook.adding_bullet(),
-          starter.gen_hook.indexing("all", { "Builtin actions" }),
+          -- starter.gen_hook.indexing("all", { "Builtin actions" }),
           starter.gen_hook.padding(3, 2),
         },
         header = table.concat({
@@ -46,42 +49,78 @@ return {
         }, "\n"),
       })
 
-      -- mini.indentscope - indent guides and scope visualization
+      -- indent guides and scope visualization
       require("mini.indentscope").setup({ symbol = "┊" })
 
-      -- mini.comment - comment lines
+      -- comment lines
       require("mini.comment").setup()
 
-      -- mini.trailspace - highlight and trim whitespace
+      -- highlight and trim whitespace
       require("mini.trailspace").setup()
       opts.desc = "Delete trailing whitespace"
       keymap.set("n", "<leader>kx", "<cmd>lua require('mini.trailspace').trim()<cr>", opts)
 
-      -- mini.move - move selection
-      require("mini.move").setup()
+      -- move selection
+      require("mini.move").setup({
+        mappings = {
+          -- Move visual selection in Visual mode.
+          left = "<Char-0xAA>",
+          down = "<Char-0xAB>",
+          up = "<Char-0xAC>",
+          right = "<Char-0xAD>",
 
-      -- mini.operators - text edit ops
+          -- Move current line in Normal mode
+          line_left = "<Char-0xAA>",
+          line_down = "<Char-0xAB>",
+          line_up = "<Char-0xAC>",
+          line_right = "<Char-0xAD>",
+        },
+      })
+
+      -- split, justify, merge selections
+      require("mini.align").setup()
+
+      -- text edit ops
       require("mini.operators").setup()
 
-      -- mini.splitjoin - split and join args
+      -- split and join args
       require("mini.splitjoin").setup()
 
-      -- mini.jump(2d) - jump!
+      -- jump!
       require("mini.jump").setup()
       require("mini.jump2d").setup()
 
-      -- mini.files - file explorer/editor
-      -- require("mini.files").setup({ windows = { preview = true } })
-      -- opts.desc = "Open file explorer"
-      -- keymap.set("n", "-", "<cmd>lua require('mini.files').open()<cr>", opts)
-      -- vim.api.nvim_create_autocmd("User", {
-      --   pattern = "TelescopeFindPre",
-      --   callback = function()
-      --     if _G.MiniFiles then
-      --       _G.MiniFiles.close()
-      --     end
-      --   end,
-      -- })
+      -- more bracket movements
+      require("mini.bracketed").setup({
+        yank = { suffix = "", options = {} },
+        diagnostic = { suffix = "", options = {} },
+      })
+
+      -- cmd line completions
+      require("mini.cmdline").setup()
+
+      -- keep windows after buffer close
+      local bufremove = require("mini.bufremove")
+      bufremove.setup()
+      keymap.set("n", "<leader>bx", function()
+        bufremove.delete(0, false)
+      end, { desc = "Delete buffer, preserve windows" })
+
+      -- option toggle and relnum in visual
+      require("mini.basics").setup({
+        options = { basic = false, extra_ui = false },
+        mappings = {
+          basic = false,
+          option_toggle_prefix = [[\]],
+          windows = false,
+          move_with_alt = false,
+        },
+        autocommands = {
+          basic = false, -- Yanky already highlights yanks
+          relnum_in_visual_mode = true,
+        },
+        silent = true,
+      })
     end,
   },
 }
