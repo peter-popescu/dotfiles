@@ -133,7 +133,7 @@ alt-8 = "workspace 8"
 alt-9 = "workspace 9"
 alt-0 = "workspace 0"
 alt-a = "workspace A"  # Arc
-# alt-b = 'workspace B'
+alt-b = 'workspace B'  # Bitwarden
 alt-c = "workspace C"  # Calendar/reminders
 alt-d = "workspace D"  # Dev
 alt-e = "workspace E"  # Explorer (finder)
@@ -162,7 +162,7 @@ alt-shift-8 = "move-node-to-workspace 8"
 alt-shift-9 = "move-node-to-workspace 9"
 alt-shift-0 = "move-node-to-workspace 0"
 alt-shift-a = "move-node-to-workspace A"
-# alt-shift-b = 'move-node-to-workspace B'
+alt-shift-b = 'move-node-to-workspace B'
 alt-shift-c = "move-node-to-workspace C"
 alt-shift-d = "move-node-to-workspace D"
 alt-shift-e = "move-node-to-workspace E"
@@ -236,8 +236,12 @@ if.during-aerospace-startup = true
 run = ["move-node-to-workspace A"]
 
 [[on-window-detected]]
+if.app-id = "com.bitwarden.desktop"
+run = ["move-node-to-workspace B"]
+
+[[on-window-detected]]
 if.app-id = "com.openai.codex"
-run = ["move-node-to-workspace 2"]
+run = ["move-node-to-workspace Q"]
 
 [[on-window-detected]]
 if.app-id = "com.github.wez.wezterm"
