@@ -19,11 +19,13 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       require("image").setup({
-        backend = "sixel",
+        backend = "kitty",
         processor = "magick_cli",
         max_width = 100,
         max_height = 50,
-        window_overlap_clear_enabled = false,
+        max_height_window_percentage = math.huge, -- this is necessary for a good experience
+        max_width_window_percentage = math.huge,
+        window_overlap_clear_enabled = true,
         integrations = {
           markdown = {
             enabled = true,

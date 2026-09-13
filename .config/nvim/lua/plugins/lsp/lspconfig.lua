@@ -9,7 +9,9 @@ return {
   config = function()
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
-    local python_env = require("core.python_env")
+    -- Pyright's Pixi environment picker is intentionally dormant during the
+    -- Ty trial. Keep core/python_env.lua unchanged so this swap is reversible.
+    -- local python_env = require("core.python_env")
 
     local keymap = vim.keymap -- for conciseness
 
@@ -60,13 +62,7 @@ return {
         opts.desc = "Restart LSP"
         keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
 
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        if client and client.name == "pyright" then
-          opts.desc = "Choose the Pyright environment"
-          keymap.set("n", "<leader>pe", function()
-            python_env.pick(ev.buf)
-          end, opts)
-        end
+        -- Pyright-only <leader>pe mapping is disabled with the server.
       end,
     })
 
@@ -120,30 +116,8 @@ return {
       settings = {},
     })
 
-    vim.lsp.config("pyright", {
-      root_markers = {
-        "pyrightconfig.json",
-        "pyproject.toml",
-        "pixi.toml",
-        "setup.py",
-        "setup.cfg",
-        "requirements.txt",
-        "Pipfile",
-        ".git",
-      },
-      on_init = function(client)
-        python_env.apply_to_pyright_client(client)
-      end,
-      settings = {
-        python = {
-          analysis = {
-            autoSearchPaths = true,
-            diagnosticMode = "openFilesOnly",
-            useLibraryCodeForTypes = true,
-          },
-        },
-      },
-    })
+    -- Ty's built-in nvim-lspconfig definition is activated below. It uses its
+    -- defaults for this trial; project-specific settings belong in [tool.ty].
 
     vim.lsp.config("vtsls", {
       settings = {
@@ -174,13 +148,7 @@ return {
       capabilities = capabilities,
     })
 
-    vim.api.nvim_create_user_command("PyrightPickEnv", function()
-      python_env.pick(vim.api.nvim_get_current_buf())
-    end, { desc = "Choose the Pyright interpreter for this workspace", force = true })
-
-    vim.api.nvim_create_user_command("PyrightClearEnv", function()
-      python_env.clear(vim.api.nvim_get_current_buf())
-    end, { desc = "Clear the saved Pyright interpreter for this workspace", force = true })
+    -- :PyrightPickEnv and :PyrightClearEnv are disabled with Pyright.
 
     for _, server in ipairs({
       "asm_lsp",
@@ -191,7 +159,7 @@ return {
       "jsonls",
       "lua_ls",
       "markdown_oxide",
-      "pyright",
+      "ty",
       "racket_langserver",
       "rust_analyzer",
       "tinymist",

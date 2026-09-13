@@ -36,7 +36,7 @@ return {
         "jsonls",
         "lua_ls",
         "markdown_oxide",
-        "pyright",
+        "ty",
         "rust_analyzer",
         "tinymist",
         "tombi",

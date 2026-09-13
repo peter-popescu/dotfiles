@@ -25,6 +25,7 @@ config.keys = {
 	{ key = "j", mods = "CMD", action = SendHex(0xAB) },
 	{ key = "k", mods = "CMD", action = SendHex(0xAC) },
 	{ key = "l", mods = "CMD", action = SendHex(0xAD) },
+	{ key = "v", mods = "CMD", action = wezterm.action.PasteFrom 'Clipboard' },
 }
 
 return config

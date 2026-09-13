@@ -95,7 +95,7 @@ alias edit-tmux="nvim ~/.tmux.conf"
 alias excl-pixi="~/.local/bin/exclude-pixi.sh"
 alias pa='eval "$(pixi shell-hook)"'
 
-alias moshcs="mosh --experimental-remote-ip=remote username@ssh.cs.brown.edu"
+alias moshcs="mosh --experimental-remote-ip=remote ppopescu@ssh.cs.brown.edu"
 
 alias path='echo $PATH | tr ":" "\n"'
 
