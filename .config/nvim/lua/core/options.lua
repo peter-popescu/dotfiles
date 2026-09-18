@@ -9,6 +9,10 @@ vim.api.nvim_create_autocmd('BufEnter', {
 
 local opt = vim.opt -- for conciseness
 
+if vim.env.NVIM_APPNAME == "remote-nvim" then
+  vim.g.clipboard = "osc52"
+end
+
 -- line numbers
 opt.number = true         -- shows absolute line number on cursor line (when relative number is on)
 
