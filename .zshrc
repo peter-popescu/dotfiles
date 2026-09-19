@@ -95,7 +95,9 @@ alias edit-tmux="nvim ~/.tmux.conf"
 alias excl-pixi="~/.local/bin/exclude-pixi.sh"
 alias pa='eval "$(pixi shell-hook)"'
 
-alias moshcs="mosh --experimental-remote-ip=remote ppopescu@ssh.cs.brown.edu"
+alias csvpn='sudo openvpn --config ~/.config/openvpn/ppopescu_browncs.ovpn --daemon --writepid /tmp/browncs-openvpn.pid'
+alias csvpn-off='sudo kill "$(cat /tmp/browncs-openvpn.pid)" && sudo rm -f /tmp/browncs-openvpn.pid'
+alias csmosh="mosh --experimental-remote-ip=remote ppopescu@ssh.cs.brown.edu"
 
 alias path='echo $PATH | tr ":" "\n"'
 
