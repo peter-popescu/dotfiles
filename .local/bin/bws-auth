@@ -1,0 +1,8 @@
+#!/bin/zsh
+
+token="$(security find-generic-password \
+  -w \
+  -s BWS_ACCESS_TOKEN \
+  -a "$USER")"
+
+exec env BWS_ACCESS_TOKEN="$token" bws "$@"
