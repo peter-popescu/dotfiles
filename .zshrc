@@ -29,6 +29,7 @@ fpath=(
   ~/.zsh/completions/
   $BREW_PREFIX/share/zsh-completions
   $BREW_PREFIX/share/zsh/site-functions
+  $HOME/.pixi/completions/zsh
   $fpath
 )
 
@@ -50,14 +51,19 @@ function zvm_config() {
   ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 }
 
-if [[ -r "$BREW_PREFIX/share/fzf-tab/fzf-tab.zsh" ]]; then
-  source "$BREW_PREFIX/share/fzf-tab/fzf-tab.zsh" # has to go first
-fi
+ZVM_INIT_MODE=sourcing
 if [[ -r "$BREW_PREFIX/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh" ]]; then
   source "$BREW_PREFIX/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
 fi
 
-(( $+functions[enable-fzf-tab] )) && enable-fzf-tab
+if (( $+commands[fzf] )); then
+  source "$BREW_PREFIX/opt/fzf/shell/key-bindings.zsh"
+  bindkey -M vicmd "^R" redo
+fi
+
+if [[ -r "$BREW_PREFIX/share/fzf-tab/fzf-tab.zsh" ]]; then
+  source "$BREW_PREFIX/share/fzf-tab/fzf-tab.zsh"
+fi
 
 # completion config
 # disable sort when completing `git checkout`
@@ -103,7 +109,9 @@ alias path='echo $PATH | tr ":" "\n"'
 
 alias vim=nvim
 
-alias 'gc'='git clone "$(pbpaste)"'
+alias gc='git clone "$(pbpaste)"'
+
+alias cook-serve='cook server "/Users/peterpopescu/Library/Mobile Documents/com~apple~CloudDocs/Cooklang"'
 
 function mkcd() { mkdir -p "$1" && cd "$1" }
 
@@ -140,11 +148,6 @@ ggl () {
 
 # ---- FZF -----
 
-# Set up fzf key bindings and fuzzy completion
-if (( $+commands[fzf] )); then
-  eval "$(fzf --zsh)"
-fi
-
 # Set up fzf theme (Dracula)
 export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4'
 
@@ -153,44 +156,22 @@ export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
 
-# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
-# - The first argument to the function ($1) is the base path to start traversal
-# - See the source code (completion.{bash,zsh}) for the details.
-_fzf_compgen_path() {
-  fd --hidden --exclude .git . "$1"
-}
-
-# Use fd to generate the list for directory completion
-_fzf_compgen_dir() {
-  fd --type=d --hidden --exclude .git . "$1"
-}
-
-# NOTE: couldn't get the bindings to work
-# source ~/.fzf-git.sh/fzf-git.sh
+if [[ -r "$HOME/.fzf-git.sh/fzf-git.sh" ]]; then
+  source "$HOME/.fzf-git.sh/fzf-git.sh"
+  bindkey -M viins -r '^G'
+  bindkey -M vicmd -r '^G'
+fi
 
 show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
 
 export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
 
-# Advanced customization of fzf options via _fzf_comprun function
-# - The first argument to the function is the name of the command.
-# - You should make sure to pass the rest of the arguments to fzf.
-_fzf_comprun() {
-  local command=$1
-  shift
-
-  case "$command" in
-    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-    export|unset) fzf --preview "eval 'echo \${}'"         "$@" ;;
-    ssh)          fzf --preview 'dig {}'                   "$@" ;;
-    *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
-  esac
-}
-
 if (( $+functions[fzf-cd-widget] )); then
-  bindkey -r '^[c'
-  bindkey '^O' fzf-cd-widget
+  bindkey -M emacs -r '^[c'
+  bindkey -M viins -r '^[c'
+  bindkey -M vicmd -r '^[c'
+  bindkey -M viins '^O' fzf-cd-widget
 fi
 
 # ----- Bat (better cat) -----
