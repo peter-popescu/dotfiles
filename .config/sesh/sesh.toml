@@ -2,10 +2,14 @@
 preview_command = "eza --all --git --icons --color=always {}"
 
 [[session]]
+name = "research"
+path = "~/code/"
+
+[[session]]
 name = "nas"
 path = "~"
 startup_command = "tmux rename-window 'mosh' && mosh peter@nas-ty"
-windows = [ "oil-ssh" ]
+windows = ["oil-ssh"]
 
 [[window]]
 name = "oil-ssh"
