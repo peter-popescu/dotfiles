@@ -1,3 +1,5 @@
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 export EDITOR="nvim"
 
 [[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
