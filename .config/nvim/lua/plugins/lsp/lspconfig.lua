@@ -148,6 +148,11 @@ return {
       },
     })
 
+    -- clangd serves CUDA translation units as well as C/C++ buffers.
+    vim.lsp.config("clangd", {
+      filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+    })
+
     vim.lsp.config("*", {
       capabilities = capabilities,
     })

@@ -27,6 +27,13 @@ return {
         evaluate_single = true,
         silent = true,
         items = {
+          {
+            name = "Open Oil",
+            action = function()
+              require("oil").open(vim.fn.getcwd())
+            end,
+            section = "File browser",
+          },
           starter.sections.builtin_actions(),
           starter.sections.recent_files(5, false),
           starter.sections.recent_files(5, true),

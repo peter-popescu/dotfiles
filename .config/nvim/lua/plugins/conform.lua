@@ -12,6 +12,7 @@ return {
         typescriptreact = { "prettierd" },
         c = { "clang-format" },
         cpp = { "clang-format" },
+        cuda = { "clang-format" },
         css = { "prettierd" },
         graphql = { "prettierd" },
         html = { "prettierd" },

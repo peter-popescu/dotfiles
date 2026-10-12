@@ -29,6 +29,7 @@ return {
         "java",
         "asm",
         "cpp",
+        "cuda",
         "css",
         "go",
         "csv",
