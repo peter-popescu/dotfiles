@@ -9,7 +9,6 @@ return {
     { "<leader>fc", "<cmd>Telescope grep_string<cr>", desc = "Find string under cursor in cwd" },
     { "<leader>fb", "<cmd>Telescope buffers sort_mru=true ignore_current_buffer=true<cr>", desc = "Find buffer" },
     { "<leader>ft", "<cmd>TodoTelescope<cr>", desc = "Find todos" },
-    { "<leader>fp", "<cmd>Telescope yank_history<cr>", desc = "Yank history" },
   },
   dependencies = {
     "nvim-lua/plenary.nvim",
@@ -46,7 +45,6 @@ return {
     -- remote host if its compiler toolchain is unavailable.
     pcall(telescope.load_extension, "fzf")
     telescope.load_extension("ui-select")
-    telescope.load_extension("yank_history")
 
     -- set keymaps
     local keymap = vim.keymap -- for conciseness
@@ -62,6 +60,5 @@ return {
       { desc = "Find buffer" }
     )
     keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
-    keymap.set("n", "<leader>fp", "<cmd>Telescope yank_history<cr>", { desc = "Yank history" })
   end,
 }

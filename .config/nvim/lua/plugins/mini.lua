@@ -123,7 +123,7 @@ return {
           move_with_alt = false,
         },
         autocommands = {
-          basic = false, -- Yanky already highlights yanks
+          basic = false, -- Keep basic autocommands disabled
           relnum_in_visual_mode = true,
         },
         silent = true,

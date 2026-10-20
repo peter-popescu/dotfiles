@@ -14,8 +14,17 @@ keymap.set("n", "<Esc>", function()
   vim.cmd.echo()
 end, { silent = true })
 
--- delete single character without copying into register
-keymap.set("n", "x", '"_x')
+-- use native d/D for cuts; changes and character cleanup discard removed text
+local delete_opts = { desc = "Discard without changing registers" }
+keymap.set({ "n", "x" }, "c", '"_c', delete_opts)
+keymap.set({ "n", "x" }, "C", '"_C', delete_opts)
+keymap.set({ "n", "x" }, "x", '"_x', delete_opts)
+keymap.set({ "n", "x" }, "X", '"_X', delete_opts)
+
+-- explicit clipboard yank for remote
+keymap.set({ "n", "x" }, "gy", '"+y', {
+  desc = "Copy to system clipboard",
+})
 
 -- window managent
 keymap.set("n", "<leader>s\\", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically

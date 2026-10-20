@@ -9,8 +9,13 @@ vim.api.nvim_create_autocmd('BufEnter', {
 
 local opt = vim.opt -- for conciseness
 
+-- remote-nvim's headless server cannot discover the local tmux clipboard
+-- provider itself, so explicitly route writes through its attached terminal UI.
 if vim.env.NVIM_APPNAME == "remote-nvim" then
   vim.g.clipboard = "osc52"
+else
+  -- Ordinary yanks and cuts use the system clipboard.
+  opt.clipboard = "unnamedplus"
 end
 
 -- line numbers
