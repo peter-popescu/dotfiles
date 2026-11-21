@@ -15,7 +15,7 @@
                             {
                                 "from": {
                                     "key_code": "caps_lock",
-                                    "modifiers": { "optional": ["shift", "command", "control"] }
+                                    "modifiers": { "optional": ["shift", "command", "control", "option"] }
                                 },
                                 "to": [
                                     {
