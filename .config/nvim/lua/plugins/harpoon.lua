@@ -3,7 +3,16 @@ return {
   branch = "harpoon2",
   dependencies = { "nvim-lua/plenary.nvim" },
   config = function()
-    require("harpoon"):setup()
+    local harpoon = require("harpoon")
+    harpoon:setup()
+
+    vim.api.nvim_create_autocmd("DirChanged", {
+      group = vim.api.nvim_create_augroup("HarpoonReloadOnDirectoryChange", { clear = true }),
+      callback = function()
+        -- Harpoon selects its list by cwd, but loads the matching data file in setup.
+        harpoon:setup()
+      end,
+    })
   end,
   keys = {
     { "<leader>h", function() require("harpoon"):list():add() end, desc = "Harpoon file", },
